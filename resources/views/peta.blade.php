@@ -268,8 +268,8 @@ body.mode-kepadatan .overlay-btn:not(.active):hover { background: var(--orange-5
 .ss-status-row { display: flex; align-items: stretch; border: 1px solid var(--border); border-radius: var(--radius-md); overflow: hidden; }
 .ss-status-item { flex: 1; display: flex; flex-direction: column; align-items: center; padding: 8px 6px; gap: 3px; transition: filter .15s; }
 .ss-status-item:hover { filter: brightness(.97); }
-.ss-status-ok       { background: var(--green-50); }
-.ss-status-no       { background: var(--red-50); }
+.ss-status-ok      { background: var(--green-50); }
+.ss-status-no      { background: var(--red-50); }
 .ss-status-danger { background: #fff1f2; }
 .ss-status-ok-padat { background: #f0fdf4; }
 
@@ -784,13 +784,27 @@ body.mode-kepadatan .overlay-btn:not(.active):hover { background: var(--orange-5
     .map-search input { width: 160px; }
     .map-year-badge { bottom: 70px; }
 
+    /* Legenda: jangan direntangkan full-width, cukup kartu kecil menempel kiri */
     .mobile-legend-wrap {
         top: 88px;
         bottom: auto;
         left: 12px;
-        right: 12px;
-        width: auto;
+        right: auto;
+        width: min(190px, calc(100vw - 24px));
     }
+    .mobile-legend { padding: 9px 11px 10px; }
+    .mobile-legend .leg-item { font-size: 9.5px; }
+    .mobile-legend .leg-swatch { width: 11px; height: 11px; }
+    .mobile-legend .leg-note { font-size: 9px; }
+    .mobile-legend .leg-tag { font-size: 8px; padding: 1px 4px; }
+
+    /* Popup & tooltip kelurahan mengikuti lebar layar, bukan fixed 240px */
+    .leaflet-popup-content-wrapper { max-width: calc(100vw - 48px) !important; }
+    .leaflet-popup-content { min-width: 170px; }
+    .popup-inner { padding: 9px 11px 10px; }
+    .popup-title { font-size: 11px; }
+    .popup-row { font-size: 10.5px; }
+    .peta-tooltip { max-width: min(220px, calc(100vw - 48px)); }
 }
 
 @media (max-width: 480px) {
@@ -803,7 +817,28 @@ body.mode-kepadatan .overlay-btn:not(.active):hover { background: var(--orange-5
     .peta-header { padding: 9px 14px 7px; }
     .peta-sidebar { height: 60vh; }
     .compare-panel { max-height: min(58vh, calc(100% - 16px)); top: 8px; left: 8px; right: 8px; width: calc(100vw - 16px); }
-    .leaflet-popup-content { min-width: 160px; }
+
+    /* Kartu-kartu makin dipadatkan di layar sangat sempit */
+    .ss-metrics { gap: 5px; }
+    .ss-metric { padding: 4px 6px; }
+    .ss-m-label { font-size: 9px; }
+    .ss-m-value { font-size: 11px; }
+    .ss-status-item { padding: 5px 3px; }
+    .ss-status-num { font-size: 14px; }
+    .cp-summary { gap: 4px; }
+    .cp-chip { padding: 5px 3px; }
+    .cp-chip-num { font-size: 14px; }
+    .cp-chip-label { font-size: 9px; }
+
+    .mobile-legend-wrap { width: min(168px, calc(100vw - 16px)); top: 80px; left: 8px; }
+    .mobile-legend { padding: 8px 9px 9px; }
+    .mobile-legend .leg-item { font-size: 9px; }
+    .mobile-legend .leg-note { display: none; }
+
+    .leaflet-popup-content-wrapper { max-width: calc(100vw - 32px) !important; }
+    .leaflet-popup-content { min-width: 150px; }
+    .popup-inner { padding: 8px 10px 9px; }
+    .popup-row { font-size: 10px; gap: 8px; }
 }
 
 @keyframes shake {
@@ -1203,10 +1238,10 @@ let rthData        = {};
 let kepadatanData  = {};
 let compareData    = {};
 let rekomendasiData = {};
-let allKelData      = [];
-let allKpData       = [];
-let allRekData      = [];
-let sortMode        = 'desc';
+let allKelData     = [];
+let allKpData      = [];
+let allRekData     = [];
+let sortMode       = 'desc';
 let geojsonLayer   = null;
 let map;
 let _compareOpen   = false;
@@ -1491,7 +1526,7 @@ function updateSummaryKp(rows) {
     const counts = { sp: 0, t: 0, s: 0, r: 0 };
     rows.forEach(d => {
         const v = d.kepadatan ?? 0;
-        if (v > 400)       counts.sp++;
+        if (v > 400)        counts.sp++;
         else if (v >= 201) counts.t++;
         else if (v >= 151) counts.s++;
         else counts.r++;
@@ -1815,7 +1850,7 @@ function activateTransisiOverlay() {
     currentOverlay = 'transisi';
 
     const legRth       = document.getElementById('mobileLegendRth');
-    const legKp        = document.getElementById('mobileLegendKepadatan');
+    const legKp         = document.getElementById('mobileLegendKepadatan');
     const legTransisi   = document.getElementById('mobileLegendTransisi');
     if (legRth) legRth.style.display = 'none';
     if (legKp)  legKp.style.display  = 'none';
@@ -2070,7 +2105,7 @@ async function renderMap() {
                     html: kelName
                 })
             }).addTo(map);
-            layer.bindPopup(html, { maxWidth: 240 });
+            layer.bindPopup(html, { maxWidth: Math.min(240, window.innerWidth - 48) });
             layer.on({
                 mouseover(e) { e.target.setStyle({ weight: 3, fillOpacity: 0.9, color: '#111827' }); e.target.openTooltip(); },
                 mouseout(e)  { try { geojsonLayer.resetStyle(e.target); } catch(_) {} e.target.closeTooltip(); },

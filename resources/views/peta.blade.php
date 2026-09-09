@@ -57,11 +57,6 @@ body.mode-kepadatan   { --sidebar-accent: var(--orange-700); }
 /* =====================================================================
    LAYOUT
 ===================================================================== */
-/* Halaman peta didesain full-viewport (app-like): footer global dari
-   layout disembunyikan khusus di halaman ini supaya tidak ikut ter-scroll
-   masuk ke atas peta/sidebar (lihat screenshot: footer "Nabila..." muncul
-   menimpa drawer). Kalau footer memang harus tetap tampil di halaman ini,
-   kabari saya — override ini gampang dicabut. */
 footer { display: none !important; }
 
 .peta-container {
@@ -114,7 +109,6 @@ footer { display: none !important; }
 
 .header-actions { display: flex; align-items: center; gap: 8px; }
 
-/* ── Inline action buttons (Bandingkan di peta-controls) ── */
 .btn {
     display: inline-flex;
     align-items: center;
@@ -275,8 +269,8 @@ body.mode-kepadatan .overlay-btn:not(.active):hover { background: var(--orange-5
 .ss-status-row { display: flex; align-items: stretch; border: 1px solid var(--border); border-radius: var(--radius-md); overflow: hidden; }
 .ss-status-item { flex: 1; display: flex; flex-direction: column; align-items: center; padding: 8px 6px; gap: 3px; transition: filter .15s; }
 .ss-status-item:hover { filter: brightness(.97); }
-.ss-status-ok      { background: var(--green-50); }
-.ss-status-no      { background: var(--red-50); }
+.ss-status-ok       { background: var(--green-50); }
+.ss-status-no       { background: var(--red-50); }
 .ss-status-danger { background: #fff1f2; }
 .ss-status-ok-padat { background: #f0fdf4; }
 
@@ -528,7 +522,6 @@ body.mode-kepadatan .overlay-btn:not(.active):hover { background: var(--orange-5
 }
 @keyframes pulse-dot { 0%,100% { box-shadow: 0 0 0 0 rgba(22,163,74,.4); } 50% { box-shadow: 0 0 0 5px rgba(22,163,74,0); } }
 
-/* ── Map legend (floating, kiri bawah peta) ── */
 .mobile-legend-wrap {
     position: absolute;
     bottom: 70px;
@@ -762,11 +755,8 @@ body.mode-kepadatan .overlay-btn:not(.active):hover { background: var(--orange-5
     .peta-sidebar.drawer-open { transform: translateY(0); }
     .sidebar-handle { display: block; }
     .sidebar-toggle-btn { display: flex; width: 42px; height: 42px; bottom: 16px; right: 16px; }
-    /* Saat drawer terbuka, geser FAB ke atas drawer supaya tidak menimpa
-       konten sidebar (mis. tombol "Tentang skor rekomendasi") */
     .sidebar-toggle-btn.fab-drawer-open { bottom: calc(56vh + 14px); }
 
-    /* Ringkas isi sidebar supaya drawer tidak makan tempat & tetap scrollable */
     .sidebar-summary { padding: 10px 12px 8px; }
     .ss-metrics { gap: 6px; margin-bottom: 8px; }
     .ss-metric { padding: 5px 8px; }
@@ -778,13 +768,10 @@ body.mode-kepadatan .overlay-btn:not(.active):hover { background: var(--orange-5
     .ss-progress-wrap { padding: 8px 12px 10px; }
     .ss-prog-header { margin-bottom: 14px; }
 
-    /* Panel bandingkan tahun: dibuat kartu kecil nempel kanan-atas (bukan
-       full-width) supaya sebagian besar peta tetap kelihatan di sekitarnya,
-       dan isinya tetap bisa discroll */
     .compare-panel {
-        width: min(260px, calc(100vw - 24px));
+        width: min(280px, calc(100vw - 24px));
         left: auto; right: 12px; top: 12px;
-        max-height: min(44vh, calc(100% - 24px));
+        max-height: min(70vh, calc(100% - 90px));
     }
     .cp-header { padding: 8px 10px 7px; }
     .cp-header-icon { width: 24px; height: 24px; }
@@ -800,13 +787,12 @@ body.mode-kepadatan .overlay-btn:not(.active):hover { background: var(--orange-5
     .cp-chip-num { font-size: 15px; }
     .cp-chip-label { font-size: 9px; }
     .cp-total-row { padding: 6px 9px; font-size: 10px; }
-    .cp-list { max-height: 100px; }
+    .cp-list { max-height: 170px; }
     .cp-list-item { padding: 5px 8px; font-size: 10px; }
 
     .map-search input { width: 160px; }
     .map-year-badge { bottom: 70px; }
 
-    /* Legenda: jangan direntangkan full-width, cukup kartu kecil menempel kiri */
     .mobile-legend-wrap {
         top: 88px;
         bottom: auto;
@@ -822,7 +808,6 @@ body.mode-kepadatan .overlay-btn:not(.active):hover { background: var(--orange-5
     .mobile-legend .leg-note { font-size: 8px; margin-top: 5px; }
     .mobile-legend .leg-tag { font-size: 7px; padding: 1px 3px; }
 
-    /* Popup & tooltip kelurahan mengikuti lebar layar, bukan fixed 240px */
     .leaflet-popup-content-wrapper { max-width: calc(100vw - 48px) !important; }
     .leaflet-popup-content { min-width: 150px; }
     .popup-inner { padding: 8px 10px 9px; }
@@ -842,13 +827,12 @@ body.mode-kepadatan .overlay-btn:not(.active):hover { background: var(--orange-5
     .peta-sidebar { height: 60vh; }
     .sidebar-toggle-btn.fab-drawer-open { bottom: calc(60vh + 14px); }
     .compare-panel {
-        width: min(230px, calc(100vw - 16px));
+        width: min(250px, calc(100vw - 16px));
         left: auto; right: 8px; top: 8px;
-        max-height: min(48vh, calc(100% - 16px));
+        max-height: min(68vh, calc(100% - 80px));
     }
-    .cp-list { max-height: 84px; }
+    .cp-list { max-height: 140px; }
 
-    /* Kartu-kartu makin dipadatkan di layar sangat sempit */
     .ss-metrics { gap: 5px; }
     .ss-metric { padding: 4px 6px; }
     .ss-m-label { font-size: 9px; }
@@ -992,7 +976,7 @@ body.mode-kepadatan .overlay-btn:not(.active):hover { background: var(--orange-5
                 <span id="mapYearLabel">{{ $year ?? 2025 }}</span>
             </div>
 
-            {{-- Legenda peta — floating card di pojok kiri --}}
+            {{-- Legenda peta --}}
             <div id="mobileLegendWrap" class="mobile-legend-wrap" aria-label="Legenda">
                 <div class="mobile-legend" id="mobileLegendRth">
                     <p class="leg-title">Status RTH Kelurahan</p>
@@ -1153,7 +1137,7 @@ body.mode-kepadatan .overlay-btn:not(.active):hover { background: var(--orange-5
                         <div class="ss-status-divider" aria-hidden="true"></div>
                         <div class="ss-status-item ss-status-no">
                             <div class="ss-status-num" id="ssDibawah">0</div>
-                            <div class="ss-status-label"><svg width="9" height="9" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>Belum Memenuhi</div>
+                            <div class="ss-status-label"><svg width="9" height="9" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 13.41 12z"/></svg>Belum Memenuhi</div>
                         </div>
                     </div>
                 </div>
@@ -1265,20 +1249,20 @@ body.mode-kepadatan .overlay-btn:not(.active):hover { background: var(--orange-5
 
 @section('scripts')
 <script>
-const YEARS        = @json($years);
+const YEARS         = @json($years);
 let currentOverlay = 'rth';
 let currentTahun   = @json($year ?? 2025);
 let rthData        = {};
 let kepadatanData  = {};
 let compareData    = {};
 let rekomendasiData = {};
-let allKelData     = [];
-let allKpData      = [];
-let allRekData     = [];
-let sortMode       = 'desc';
+let allKelData      = [];
+let allKpData       = [];
+let allRekData      = [];
+let sortMode        = 'desc';
 let geojsonLayer   = null;
 let map;
-let _compareOpen   = false;
+let _compareOpen    = false;
 let _loadingTimer  = null;
 
 /* ── Toast ── */
@@ -1341,12 +1325,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
 const normKel = s => (s ?? '').toString().toUpperCase().replace(/\s+/g, ' ').trim();
 
-/* ── Analisis ketetanggaan spasial: dua kelurahan dianggap bertetangga
-   kalau batas polygon-nya bersinggungan/bersentuhan. Pakai Turf.js
-   (turf.booleanIntersects) — bukan overlay geometri (tidak ada
-   ST_Intersection/ST_Difference, tidak ada unit spasial baru terbentuk),
-   cuma pengecekan relasi topologis "nempel atau tidak" antar dua bentuk
-   yang sudah ada, murni geometri komputasi (bukan machine learning). ── */
 function computeNeighbors(geojson) {
     const neighbors = {};
     const features = Array.isArray(geojson?.features) ? geojson.features : [];
@@ -1361,7 +1339,7 @@ function computeNeighbors(geojson) {
             try {
                 touching = turf.booleanIntersects(features[i], features[j]);
             } catch (err) {
-                touching = false; // geometri tidak valid — anggap tidak bertetangga
+                touching = false;
             }
             if (touching) {
                 neighbors[gidA].push(gidB);
@@ -1373,69 +1351,45 @@ function computeNeighbors(geojson) {
     return neighbors;
 }
 
-/* ── Rekomendasi: hitung skor prioritas RTH & potensi penambahan penduduk ──
-   Skor "Prioritas RTH" dan "Potensi Penduduk" berbasis standar Permen PU
-   No.05/PRT/M/2008 skala kelurahan (RTH ≥ 0,30 m²/jiwa DAN luas RTH ≥
-   9.000 m²) — bukan dari target 20% (itu cuma agregat kota, lihat ss-prog).
-
-   Selain skor, dihitung juga:
-   1. totalTetangga / tetanggaBelumMemenuhi → dari kelurahan yang
-      berbatasan langsung (dicek via Turf.js, lihat computeNeighbors),
-      berapa yang juga belum memenuhi standar RTH. Dipakai di kartu RTH
-      sebagai konteks kawasan, menggantikan peringkat/nomor urut.
-   2. kapasitasTambahanPenduduk → perkiraan berapa jiwa lagi yang masih
-      bisa ditampung tanpa membuat kelurahan itu jadi "padat" (>200
-      jiwa/ha) dan tanpa membuat RTH per kapita jatuh di bawah standar. */
 function computeRekomendasi(data, neighborInfo = {}) {
     const rows = Array.isArray(data) ? data.filter(d => d?.kelurahan) : [];
     if (!rows.length) return [];
 
     const maxKepadatan = Math.max(...rows.map(d => Number(d.kepadatan) || 0), 1);
-    const STANDAR_KAPITA   = 0.30;  // m²/jiwa (Permen PU 05/2008)
-    const STANDAR_LUAS     = 9000;  // m² (Permen PU 05/2008)
-    const BATAS_AMAN_HA    = 200;   // jiwa/ha — ambang sebelum masuk kategori "Tinggi" (SNI 03-1733-2004: ≥201)
+    const STANDAR_KAPITA   = 0.30;
+    const STANDAR_LUAS     = 9000;
+    const BATAS_AMAN_HA    = 200;
 
     const computed = rows.map(d => {
         const pct        = Number(d.persentase_rth) ?? 0;
         const kepadatan  = Number(d.kepadatan) || 0;
         const penduduk   = Number(d.penduduk) || 0;
-        const luasRth    = Number(d.luas_rth) || 0; // km²
+        const luasRth    = Number(d.luas_rth) || 0;
         const luasRthM2  = luasRth * 1_000_000;
         const luasWilayahKm2 = Number(d.luas_wilayah_kel ?? d.luas_wilayah) || 0;
         const luasWilayahHa  = luasWilayahKm2 * 100;
 
         const skorKepadatanN = (kepadatan / maxKepadatan) * 100;
 
-        // RTH per kapita: pakai nilai dari backend kalau ada (rth_per_kapita
-        // sudah dihitung PetaController), fallback hitung sendiri.
         const rthKapita = d.rth_per_kapita != null
             ? Number(d.rth_per_kapita)
             : (penduduk > 0 ? luasRthM2 / penduduk : 0);
 
-        // Skor Prioritas RTH: defisit per kapita (50%) + kepadatan (30%) +
-        // defisit luas minimum 9.000 m² (20%)
         const defisitKapita = Math.max(0, STANDAR_KAPITA - rthKapita);
         const skorDefisit   = Math.min(100, (defisitKapita / STANDAR_KAPITA) * 100);
         const defisitLuas   = Math.max(0, STANDAR_LUAS - luasRthM2);
         const skorLuas      = Math.min(100, (defisitLuas / STANDAR_LUAS) * 100);
         const skorRth = Math.min(100, (skorDefisit * 0.5) + (skorKepadatanN * 0.3) + (skorLuas * 0.2));
 
-        // Skor Potensi Penduduk: ruang kepadatan (60%) + surplus RTH per
-        // kapita di atas standar 0,30 m²/jiwa (40%), bukan surplus dari 20%.
         const skorRuang   = 100 - skorKepadatanN;
         const surplusKapita = Math.max(0, rthKapita - STANDAR_KAPITA);
         const skorSurplus   = Math.min(100, (surplusKapita / STANDAR_KAPITA) * 100);
         const skorPotensi = Math.min(100, (skorRuang * 0.6) + (skorSurplus * 0.4));
 
-        // ── Kebutuhan tambahan RTH (m²) agar 2 syarat Permen PU terpenuhi
-        //    sekaligus: RTH ≥ 0,30 m²/jiwa DAN luas RTH ≥ 9.000 m². ──
         const targetKapitaM2 = STANDAR_KAPITA * penduduk;
-        const targetMinimum  = Math.max(targetKapitaM2, STANDAR_LUAS);
+        const targetMinimum   = Math.max(targetKapitaM2, STANDAR_LUAS);
         const kebutuhanRthM2 = Math.max(0, targetMinimum - luasRthM2);
 
-        // ── Kapasitas tambahan penduduk: dibatasi DUA hal sekaligus —
-        //    (a) supaya kepadatan tidak lewat ambang "Tinggi" (200 jiwa/ha)
-        //    (b) supaya RTH per kapita tetap ≥ 0,30 m²/jiwa setelah nambah. ──
         const kapasitasKepadatan = luasWilayahHa > 0
             ? Math.max(0, (BATAS_AMAN_HA - kepadatan) * luasWilayahHa)
             : 0;
@@ -1462,9 +1416,6 @@ function computeRekomendasi(data, neighborInfo = {}) {
         };
     });
 
-    // ── Peringkat (rankRth & rankPotensi) sudah tidak dihitung lagi — kartu
-    //    RTH pakai konteks tetangga (lihat buildRthReason), kartu Kepadatan/
-    //    Potensi cukup deskripsi tanpa nomor urut. ──
     return computed;
 }
 
@@ -1548,8 +1499,6 @@ function updateSummaryKp(rows) {
     if (!rows.length) return;
     const total    = rows.reduce((s, d) => s + (d.jumlah_penduduk ?? (d.kepadatan ?? 0) * 100 * (d.luas_wilayah ?? 0)), 0);
     const luas     = rows.reduce((s, d) => s + (d.luas_wilayah ?? 0), 0);
-    // total (jiwa) / luas (km²) = jiwa/km² → ÷100 supaya konsisten jiwa/ha
-    // dengan d.kepadatan per kelurahan (fallback saat luas kosong sudah ha).
     const rataRata = luas ? (total / luas / 100) : (rows.reduce((s, d) => s + (d.kepadatan ?? 0), 0) / rows.length);
     const terpadat = [...rows].sort((a, b) => (b.kepadatan ?? 0) - (a.kepadatan ?? 0))[0];
     animateVal('kpTotalPenduduk', total    ? total.toLocaleString('id-ID') + ' jiwa' : '-');
@@ -1596,22 +1545,12 @@ function bumpNum(id, val) {
     setTimeout(() => el.classList.remove('bump'), 400);
 }
 
-/* ── RTH badge status helper ──
-   Status per-kelurahan sekarang standar Permen PU 05/2008 (0,30 m²/jiwa &
-   9.000 m²) — dihitung backend (apiRth), bukan threshold %-luas di sini. */
 function pctBadgeInfo(statusLabel) {
     return statusLabel === 'Memenuhi'
         ? { cls: 'ski-pct-ideal',  label: 'Memenuhi' }
         : { cls: 'ski-pct-kritis', label: 'Belum Memenuhi' };
 }
 
-/* ── Narasi rekomendasi: alasan logis, bukan cuma angka mentah ──
-   Standar: Permen PU No. 05/PRT/M/2008 (RTH skala kelurahan) —
-   RTH per kapita ≥ 0,30 m²/jiwa DAN luas RTH ≥ 9.000 m². Konsisten
-   dipakai di 4 tempat (sidebar RTH, sidebar Kepadatan, popup RTH,
-   popup Kepadatan) supaya alasannya tidak beda-beda. */
-/* Label kepadatan mengikuti kelas SNI 03-1733-2004 yang sama dengan
-   kpCategory() — Rendah / Sedang / Tinggi / Sangat Padat (jiwa/ha). */
 function densityLabel(kp) {
     if (kp > 400)  return 'kepadatan sangat tinggi';
     if (kp >= 201) return 'kepadatan tinggi';
@@ -1626,11 +1565,6 @@ function buildRthReason(rthPerKapita, penduduk, kepadatan, extra = {}) {
         ? `Ruang hijau di sini baru sekitar ${rthPerKapita.toFixed(2)} m² untuk setiap warga, padahal standar minimalnya 0,30 m²/warga`
         : `Ruang hijau di sini sudah sekitar ${rthPerKapita.toFixed(2)} m² per warga, di atas standar minimal 0,30 m²`;
     const densFlag = kepadatan >= 151 ? `, ditambah lagi penduduknya ${densityLabel(kepadatan)}` : '';
-    // ── Konteks tetangga: dari kelurahan yang berbatasan langsung (dicek
-    //    via Turf.js, lihat computeNeighbors), berapa yang juga belum
-    //    memenuhi standar. Ini pengganti "peringkat" — lebih mudah
-    //    dijelaskan karena logikanya cuma "berbatasan atau tidak", bukan
-    //    formula skor berlapis. ──
     const neighborTxt = (totalTetangga > 0 && tetanggaBelumMemenuhi > 0)
         ? `${tetanggaBelumMemenuhi} dari ${totalTetangga} kelurahan tetangga yang berbatasan langsung juga belum memenuhi standar RTH — kawasan ini secara umum kekurangan ruang hijau. `
         : '';
@@ -1642,9 +1576,6 @@ function buildPotensiReason(rthPerKapita, penduduk, kepadatan, extra = {}) {
     const densDesc = kepadatan < 151
         ? `Kepadatan penduduknya masih tergolong ${densityLabel(kepadatan)} (${kepadatan.toLocaleString('id-ID')} jiwa/ha)`
         : `Kepadatan penduduknya ${densityLabel(kepadatan)} (${kepadatan.toLocaleString('id-ID')} jiwa/ha)`;
-    // ── Label kapasitas dibuat kualitatif (bukan angka jiwa persis), diukur
-    //    relatif terhadap jumlah penduduk saat ini supaya adil buat
-    //    kelurahan kecil maupun besar. ──
     const rasioKapasitas = penduduk > 0 ? kapasitasTambahanPenduduk / penduduk : 0;
     let capTxt;
     if (kapasitasTambahanPenduduk <= 0) {
@@ -1683,8 +1614,6 @@ function renderSidebarList(data) {
         const luasKel = d.luas_wilayah_kel ?? d.luas_wilayah ?? null;
         const sub    = [d.luas_rth != null ? Number(d.luas_rth).toFixed(3) + ' km² RTH' : null, luasKel != null ? Number(luasKel).toFixed(2) + ' km² wilayah' : null].filter(Boolean).join(' · ');
 
-        // Rekomendasi RTH ditempel di detail tiap kelurahan tab ini —
-        // rekomendasi potensi penduduk ada di tab Kepadatan (renderKpList).
         const rek = rekomendasiData[normKel(d.kelurahan)];
         let rekHtml = '';
         let rankBadge = '';
@@ -1723,8 +1652,6 @@ function renderKpList(data) {
         const penduduk = d.jumlah_penduduk ? d.jumlah_penduduk.toLocaleString('id-ID') + ' jiwa' : null;
         const sub   = [penduduk, d.kecamatan ? 'Kec. ' + d.kecamatan : null].filter(Boolean).join(' · ');
 
-        // Rekomendasi potensi tambah penduduk ditempel di tab ini
-        // rekomendasi prioritas RTH ada di tab Kelurahan (renderSidebarList).
         const rek = rekomendasiData[normKel(d.kelurahan)];
         let rekHtml = '';
         let rankBadge = '';
@@ -1748,13 +1675,12 @@ function highlightSidebarItem(gid) {
     document.querySelectorAll('.sidebar-kel-item, .kp-kel-item, .cp-list-item').forEach(el => {
         el.classList.toggle('highlighted', el.dataset.gid === key);
     });
-    // scroll ke item yang match di panel yang lagi kelihatan aja
     document.querySelectorAll('.sidebar-kel-item.highlighted, .kp-kel-item.highlighted, .cp-list-item.highlighted').forEach(el => {
         if (el.offsetParent !== null) el.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
     });
 }
 
-/* ── Focus kelurahan (dipanggil dari sidebar, panel compare, maupun klik peta) ── */
+/* ── Focus kelurahan ── */
 function focusKel(gid) {
     highlightSidebarItem(gid);
     if (!geojsonLayer) return;
@@ -1770,7 +1696,6 @@ function focusKel(gid) {
 function setOverlay(type) {
     currentOverlay = type;
 
-    // Mobile/map legend toggle
     const legRth = document.getElementById('mobileLegendRth');
     const legKp  = document.getElementById('mobileLegendKepadatan');
     const legTransisi = document.getElementById('mobileLegendTransisi');
@@ -1826,7 +1751,7 @@ function filterSearch(val) {
 
 function clearSearch() {
     const input = document.getElementById('searchKel');
-    const btn   = document.getElementById('searchClear');
+    const btn    = document.getElementById('searchClear');
     if (input) { input.value = ''; input.focus(); }
     if (btn)   btn.classList.remove('visible');
     filterSearch('');
@@ -1870,16 +1795,13 @@ function toggleCompare() {
     panel.setAttribute('aria-hidden', String(!_compareOpen));
     if (btn) { btn.setAttribute('aria-expanded', String(_compareOpen)); btn.classList.toggle('is-compare-open', _compareOpen); }
     if (_compareOpen) panel.querySelector('.cp-close')?.focus();
-    // Mode "Peta Transisi Status RTH" cuma relevan selama panel Bandingkan
-    // kebuka — begitu ditutup, balik ke tampilan status RTH normal.
+    if (_compareOpen && window.innerWidth <= 768) {
+        const sb = document.getElementById('petaSidebar');
+        if (sb?.classList.contains('drawer-open')) { sb.classList.remove('drawer-open'); updateFabIcon(); }
+    }
     if (!_compareOpen && currentOverlay === 'transisi') setOverlay('rth');
 }
 
-/* ── Aktifkan mode "Peta Transisi Status RTH" di peta utama, dipicu dari
-   panel Bandingkan. Sengaja tidak punya tombol toggle sendiri di
-   "Overlay Peta" — mode ini aktif selama panel Bandingkan menampilkan
-   hasil, dan otomatis balik ke RTH begitu panel ditutup (lihat
-   toggleCompare()). ── */
 function activateTransisiOverlay() {
     currentOverlay = 'transisi';
 
@@ -1915,10 +1837,6 @@ async function handleLoadCompare() {
         setChipAnim('cpTetap', res.tetap ?? 0);
         setChipAnim('cpNaik',  res.naik  ?? 0);
 
-        // ── Peta Transisi Status RTH: simpan data buat pewarnaan peta,
-        //    lalu aktifkan mode transisi (bukan overlay geometri — lihat
-        //    catatan di legenda/popup). Geometri tetap pakai layer yang
-        //    sudah dimuat renderMap(), cuma dicocokkan lewat gid. ──
         compareData = {};
         (res.data || []).forEach(d => { compareData[d.gid] = d; });
         activateTransisiOverlay();
@@ -1968,8 +1886,11 @@ function setChipAnim(id, val) {
 
 /* ── Mobile sidebar ── */
 function toggleMobileSidebar() {
-    document.getElementById('petaSidebar')?.classList.toggle('drawer-open');
+    const sb = document.getElementById('petaSidebar');
+    const opening = !sb?.classList.contains('drawer-open');
+    sb?.classList.toggle('drawer-open');
     updateFabIcon();
+    if (opening && window.innerWidth <= 768 && _compareOpen) toggleCompare();
 }
 
 function updateFabIcon() {
@@ -2020,8 +1941,6 @@ async function renderMap() {
                 const cmp = compareData[gid];
                 if (cmp) fillColor = transisiColor(cmp.transisi);
             } else if (currentOverlay === 'rth') {
-                // Status per kelurahan sesuai Permen PU 05/2008, bukan lagi
-                // dari persentase luas RTH ≥20% (itu cuma target agregat kota).
                 const memenuhi = recRth?.status_persentase != null
                     ? recRth.status_persentase === 'Memenuhi'
                     : !!feature.properties.memenuhi_standar_kelurahan;
@@ -2065,8 +1984,6 @@ async function renderMap() {
                 const pctNum = luasWil > 0
                     ? (Number(luasRth) / Number(luasWil)) * 100
                     : 0;
-                // Status Memenuhi/Belum Memenuhi ikut standar Permen PU 05/2008
-                // dari backend (rth.status_persentase), bukan pctNum >= 20.
                 const statusOk = rth?.status_persentase != null
                     ? rth.status_persentase === 'Memenuhi'
                     : !!feature.properties.memenuhi_standar_kelurahan;
@@ -2076,8 +1993,6 @@ async function renderMap() {
                     ? Number(rth.rth_per_kapita).toFixed(2) + ' m²/jiwa'
                     : (feature.properties.rth_per_kapita != null ? Number(feature.properties.rth_per_kapita).toFixed(2) + ' m²/jiwa' : '-');
 
-                // Rekomendasi RTH ditampilkan di popup mode RTH — rekomendasi
-                // potensi penduduk ada di popup mode Kepadatan (branch else).
                 const rek = rekomendasiData[kelKey];
                 let rekRow = '';
                 if (rek) {
@@ -2111,7 +2026,6 @@ async function renderMap() {
                     else                   catClass = 'badge-rendah';
                 }
 
-                // Rekomendasi potensi tambah penduduk khusus popup mode Kepadatan.
                 const rekKp = rekomendasiData[kelKey];
                 let rekKpRow = '';
                 if (rekKp) {
@@ -2148,7 +2062,10 @@ async function renderMap() {
                     map.fitBounds(e.target.getBounds(), { padding: [40, 40] });
                     e.target.openPopup();
                     highlightSidebarItem(gid);
-                    if (window.innerWidth <= 768) { document.getElementById('petaSidebar')?.classList.add('drawer-open'); updateFabIcon(); }
+                    if (window.innerWidth <= 768) {
+                        if (_compareOpen) toggleCompare();
+                        document.getElementById('petaSidebar')?.classList.add('drawer-open'); updateFabIcon();
+                    }
                 }
             });
         }
@@ -2164,21 +2081,17 @@ function resetMapView() {
 }
 
 /* ── Color helpers ── */
-// Warna kelurahan mengikuti status Permen PU 05/2008 (0,30 m²/jiwa &
-// ≥9.000 m² RTH), bukan lagi persentase luas ≥20% (itu hanya agregat kota).
 function rthColor(memenuhi) {
     return memenuhi ? '#166534' : '#dc2626';
 }
-/* ── Klasifikasi kepadatan: SNI 03-1733-2004 (Tata Cara Perencanaan
-   Lingkungan Perumahan di Perkotaan) — satuan jiwa/ha (backend sudah
-   mengonversi dari jiwa/km² ÷100, lihat PetaController):
-   Rendah <150 · Sedang 151–200 · Tinggi 201–400 · Sangat Padat >400 */
+
 function kepadatanColor(kp) {
     if (kp > 400) return '#7f1d1d';
     if (kp >= 201) return '#dc2626';
     if (kp >= 151) return '#f97316';
     return '#86efac';
 }
+
 function kpCategory(kp) {
     if (kp > 400)  return 'Sangat Padat';
     if (kp >= 201) return 'Tinggi';
@@ -2186,11 +2099,6 @@ function kpCategory(kp) {
     return 'Rendah';
 }
 
-/* ── Peta Transisi Status RTH: komparasi status Memenuhi/Belum Memenuhi
-   (Permen PU 05/2008) antar dua tahun untuk kelurahan yang sama.
-   Ini BUKAN overlay spasial (tidak ada ST_Intersection/ST_Difference,
-   tidak ada geometri baru terbentuk) — hanya perbandingan status/atribut
-   yang divisualisasikan di atas geometri kelurahan yang sudah ada. ── */
 function transisiColor(transisi) {
     switch (transisi) {
         case 'konsisten_memenuhi': return '#166534';
@@ -2200,6 +2108,7 @@ function transisiColor(transisi) {
         default:                   return '#d1d5db';
     }
 }
+
 function transisiLabel(transisi) {
     switch (transisi) {
         case 'konsisten_memenuhi': return 'Konsisten Memenuhi';

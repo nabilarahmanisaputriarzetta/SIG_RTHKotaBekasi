@@ -44,9 +44,9 @@ svg polygon, svg polyline, svg line {
   --blue:       #1d4ed8;
   --blue-bg:    #eff6ff;
 
-  --r:         10px;
-  --r-lg:     14px;
-  --r-xl:     18px;
+  --r:          10px;
+  --r-lg:       14px;
+  --r-xl:       18px;
   --shadow: 0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04);
   --shadow-md: 0 4px 12px rgba(0,0,0,0.08), 0 1px 3px rgba(0,0,0,0.04);
 
@@ -775,14 +775,14 @@ body {
 
       </div>
 
-      {{-- ── % RTH 15 Terendah & Top 15 Kepadatan ── --}}
+      {{-- ── RTH per Kapita 15 Terendah (Permen PU) & Top 15 Kepadatan ── --}}
       <div class="grid-2">
 
         <div class="card">
           <div class="card-head">
             <div class="card-head-text">
-              <h3>15 Kelurahan dengan Persentase RTH Terendah</h3>
-              <p>Kandidat prioritas penghijauan</p>
+              <h3>15 Kelurahan dengan RTH per Kapita Terendah</h3>
+              <p>Kandidat prioritas penghijauan (standar Permen PU No. 05/PRT/M/2008)</p>
             </div>
           </div>
           <div class="card-body">
@@ -900,9 +900,6 @@ body {
                   </th>
                   <th>Luas (km²)</th>
                   <th>RTH (km²)</th>
-                  <th class="sortable" data-key="persen_rth" onclick="sortAnalysisTable('persen_rth')">
-                    % RTH <span class="sort-ic">↕</span>
-                  </th>
                   <th class="sortable" data-key="diff_persen_rth" onclick="sortAnalysisTable('diff_persen_rth')">
                     Perubahan RTH <span class="sort-ic">↕</span>
                     <span class="th-sub">vs {{ $stats['tahun_pembanding'] ?? '–' }}</span>
@@ -921,7 +918,7 @@ body {
                 </tr>
               </thead>
               <tbody id="analysisTableBody">
-                <tr><td colspan="12" style="text-align:center;color:var(--ink3);padding:20px">Memuat data…</td></tr>
+                <tr><td colspan="11" style="text-align:center;color:var(--ink3);padding:20px">Memuat data…</td></tr>
               </tbody>
             </table>
           </div>
@@ -1025,9 +1022,9 @@ function computeItemSkorPrioritas(item){
 function densityCategory(kepadatanPerKm2){
     const k = Number(kepadatanPerKm2) || 0;
     if (k > 40000) return { label:'Sangat Padat', color:'#8B2C24', bg:'#fdf0ef' };
-    if (k > 20000) return { label:'Tinggi',        color:'#D43C33', bg:'#fef2f1' };
-    if (k > 15000) return { label:'Sedang',        color:'#E67E22', bg:'#fef6ec' };
-    return               { label:'Rendah',        color:'#4d7a4a', bg:'#f0fdf4' };
+    if (k > 20000) return { label:'Tinggi',       color:'#D43C33', bg:'#fef2f1' };
+    if (k > 15000) return { label:'Sedang',       color:'#E67E22', bg:'#fef6ec' };
+    return               { label:'Rendah',       color:'#4d7a4a', bg:'#f0fdf4' };
 }
 
 /* =======================================
@@ -1208,9 +1205,12 @@ Chart.defaults.font.family = "'DM Sans', system-ui, sans-serif";
 Chart.defaults.font.size   = 11.5;
 Chart.defaults.color       = tc;
 
-function colorByRth(pct, alpha) {
-  if (pct < 10)  return `rgba(192,57,43,${alpha})`;
-  if (pct < 20)  return `rgba(180,83,9,${alpha})`;
+function colorByRthKapita(m2, alpha) {
+  // Threshold mengikuti Permen PU No. 05/PRT/M/2008: standar minimal RTH
+  // per kapita adalah 0,30 m²/jiwa. Tingkat merah lebih pekat kalau jauh
+  // di bawah setengah dari standar tersebut.
+  if (m2 < 0.15)  return `rgba(192,57,43,${alpha})`;
+  if (m2 < 0.30)  return `rgba(180,83,9,${alpha})`;
   return `rgba(21,128,61,${alpha})`;
 }
 
@@ -1390,7 +1390,7 @@ function renderAnalysisTable() {
     const msg = tableSearchTerm
         ? `Tidak ada kelurahan yang cocok dengan "${tableSearchTerm}"`
         : 'Data tidak tersedia';
-    tbody.innerHTML = `<tr><td colspan="12" style="text-align:center;color:var(--ink3);padding:20px">${msg}</td></tr>`;
+    tbody.innerHTML = `<tr><td colspan="11" style="text-align:center;color:var(--ink3);padding:20px">${msg}</td></tr>`;
     return;
   }
 
@@ -1405,7 +1405,6 @@ function renderAnalysisTable() {
         <td class="td-name">${namaDisplay}</td>
         <td>${fmt2(r.luas)}</td>
         <td>${fmt3(r.rth_km2)}</td>
-        <td>${fmt4(r.persen_rth)}%</td>
         <td>${trendCellHtml(r.diff_persen_rth, r.trend_rth)}</td>
         <td>${fmtInt(r.jumlah_penduduk)}</td>
         <td>${fmtInt(r.kepadatan/100)}</td>
@@ -1462,7 +1461,7 @@ function renderRthChart(){
     }
 
     const rthData = [...filteredData]
-        .sort((a,b)=>a.persen_rth - b.persen_rth)
+        .sort((a,b)=>a.rth_per_kapita - b.rth_per_kapita)
         .slice(0,15);
 
     rthChart = new Chart(ctx.getContext("2d"),{
@@ -1474,12 +1473,12 @@ function renderRthChart(){
                     : d.nama
             ),
             datasets:[{
-                data:rthData.map(d=>d.persen_rth),
+                data:rthData.map(d=>d.rth_per_kapita),
                 backgroundColor:rthData.map(d=>{
                     if(activeFilter.gid === d.gid){
                         return "#2563eb";
                     }
-                    return colorByRth(d.persen_rth, 0.85);
+                    return colorByRthKapita(d.rth_per_kapita, 0.85);
                 }),
                 borderRadius:4,
                 borderSkipped:false
@@ -1494,7 +1493,7 @@ function renderRthChart(){
                 tooltip:{
                     callbacks:{
                         label:function(context){
-                            return "RTH : " + context.parsed.x.toFixed(2) + " %";
+                            return "RTH per kapita : " + context.parsed.x.toFixed(2) + " m²/jiwa";
                         }
                     }
                 }
@@ -1509,7 +1508,7 @@ function renderRthChart(){
                 x:{
                     grid:{color:gc},
                     ticks:{
-                        callback:v=>v + "%"
+                        callback:v=>v + " m²"
                     }
                 },
                 y:{

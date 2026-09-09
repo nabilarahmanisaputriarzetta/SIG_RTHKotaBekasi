@@ -115,8 +115,7 @@ class DataController extends Controller
         // =========================
 
         $totalKelurahan = $rows->count();
-
-        $totalPenduduk = $rows->sum('jumlah_penduduk');
+        $totalPenduduk  = $rows->sum('jumlah_penduduk');
 
         $totalRth  = $rows->sum('luas_rth_km2');
         $totalLuas = $rows->sum('luas_kelurahan_km2');
@@ -127,8 +126,7 @@ class DataController extends Controller
 
         // Status per kelurahan: Permen PU 05/2008 (0,30 m²/jiwa & ≥9.000 m² RTH),
         // BUKAN threshold 20% — itu hanya untuk persenRth (agregat kota) di atas.
-        $memenuhi = $rows->where('memenuhi_standar_kelurahan', true)->count();
-
+        $memenuhi      = $rows->where('memenuhi_standar_kelurahan', true)->count();
         $belumMemenuhi = $totalKelurahan - $memenuhi;
 
         // RTH per kapita (m²/jiwa) = luas RTH (m²) / jumlah penduduk
@@ -182,38 +180,23 @@ class DataController extends Controller
             : null;
 
         $stats = [
-
-            'total_kelurahan'=>$totalKelurahan,
-
-            'total_penduduk'=>round($totalPenduduk),
-
-            'kepadatan_kota'=>$kepadatanKota,
-
-            'persen_rth'=>$persenRth,
-
-            'rth_per_kapita'=>$rthPerKapita,
-
-            'kelurahan_kritis'=>$belumMemenuhi,
-
-            'total_defisit'=>$totalDefisit,
-
-            'kelurahan_memenuhi'=>$memenuhi,
-
-            'capaian_target'=>round(($persenRth/20)*100,2),
+            'total_kelurahan'       => $totalKelurahan,
+            'total_penduduk'        => round($totalPenduduk),
+            'kepadatan_kota'        => $kepadatanKota,
+            'persen_rth'            => $persenRth,
+            'rth_per_kapita'        => $rthPerKapita,
+            'kelurahan_kritis'      => $belumMemenuhi,
+            'total_defisit'         => $totalDefisit,
+            'kelurahan_memenuhi'    => $memenuhi,
+            'capaian_target'        => round(($persenRth / 20) * 100, 2),
 
             // ── Analisis perubahan luas RTH (vs tahun pembanding) ──
-            'tahun_pembanding'=>$tahunPembanding,
-
-            'diff_persen_rth_kota'=>$diffPersenRthKota,
-
-            'diff_luas_rth_kota_km2'=>$diffLuasRthKota,
-
-            'kelurahan_naik'=>$kelurahanNaik,
-
-            'kelurahan_turun'=>$kelurahanTurun,
-
-            'kelurahan_tetap'=>$kelurahanTetap,
-
+            'tahun_pembanding'      => $tahunPembanding,
+            'diff_persen_rth_kota'  => $diffPersenRthKota,
+            'diff_luas_rth_kota_km2'=> $diffLuasRthKota,
+            'kelurahan_naik'        => $kelurahanNaik,
+            'kelurahan_turun'       => $kelurahanTurun,
+            'kelurahan_tetap'       => $kelurahanTetap,
         ];
 
         // =========================
@@ -265,8 +248,8 @@ class DataController extends Controller
         // =========================
         // PIE DATA
         $pieData = [
-            ['label' => 'Memenuhi',       'count' => $memenuhi,       'color' => '#2e7d32'],
-            ['label' => 'Belum Memenuhi', 'count' => $belumMemenuhi,  'color' => '#d32f2f'],
+            ['label' => 'Memenuhi',       'count' => $memenuhi,      'color' => '#2e7d32'],
+            ['label' => 'Belum Memenuhi', 'count' => $belumMemenuhi, 'color' => '#d32f2f'],
         ];
 
         // =========================
@@ -277,15 +260,16 @@ class DataController extends Controller
         ];
 
         // =========================
-        // TOP RTH TERENDAH
+        // TOP RTH TERENDAH (berdasarkan standar Permen PU No. 05/PRT/M/2008:
+        // RTH per kapita, bukan persentase RTH — lihat catatan di baris 65-67)
         $rthBarData = $rows
-            ->sortBy('persentase_rth')
+            ->sortBy('rth_per_kapita')
             ->take(15)
             ->map(function ($r) {
                 return [
-                    'gid'  => $r->gid,
-                    'nama'      => $r->namobj,
-                    'persen_rth'=> round($r->persentase_rth, 2),
+                    'gid'            => $r->gid,
+                    'nama'           => $r->namobj,
+                    'rth_per_kapita' => round($r->rth_per_kapita, 4),
                 ];
             })
             ->values();
@@ -297,8 +281,8 @@ class DataController extends Controller
             ->take(15)
             ->map(function ($r) {
                 return [
-                    'gid'  => $r->gid,
-                    'nama'      => $r->namobj,
+                    'gid'             => $r->gid,
+                    'nama'            => $r->namobj,
                     'jumlah_penduduk' => round($r->jumlah_penduduk),
                 ];
             })
@@ -338,17 +322,14 @@ class DataController extends Controller
             ->groupBy('tahun');
 
         $trendData = [
-            'years' => [],
-            'rth' => [],
+            'years'           => [],
+            'rth'             => [],
             'jumlah_penduduk' => []
         ];
 
         foreach ($trendRows as $tahun => $items) {
-
-            $totalRthTahun = $items->sum('luas_rth');
-
-            $totalLuasTahun = $items->sum('luas_kelurahan');
-
+            $totalRthTahun      = $items->sum('luas_rth');
+            $totalLuasTahun     = $items->sum('luas_kelurahan');
             $totalPendudukTahun = $items->sum('jumlah_penduduk');
 
             $trendData['years'][] = $tahun;
@@ -357,12 +338,7 @@ class DataController extends Controller
                 ? round(($totalRthTahun / $totalLuasTahun) * 100, 2)
                 : 0;
 
-            $totalPendudukTahun = $items->sum('jumlah_penduduk');
-            $totalLuasTahun     = $items->sum('luas_kelurahan');
-
-            $trendData['jumlah_penduduk'][] =
-            round($totalPendudukTahun);
-
+            $trendData['jumlah_penduduk'][] = round($totalPendudukTahun);
         }
 
         // GeoJSON: tampilkan polygon dari semua kelurahan,
@@ -410,50 +386,30 @@ class DataController extends Controller
         $mapGeoJson = json_decode($geoJsonResult->geojson, true);
 
         foreach ($mapGeoJson['features'] as &$feature) {
-
             $gid = $feature['properties']['gid'];
-
-            $feature['properties']['skor_prioritas'] =
-                $priorityScores[$gid] ?? 0;
-
+            $feature['properties']['skor_prioritas'] = $priorityScores[$gid] ?? 0;
         }
         unset($feature);
 
         $masterData = $rows->map(function ($r) use ($priorityScores) {
-
             return [
-
-                'gid' => $r->gid,
-
-                'nama' => $r->namobj,
-
-                'kecamatan' => $r->wadmkc,
-
-                'persen_rth' => $r->persentase_rth,
-
-                'luas_rth' => $r->luas_rth_km2,
-
-                'luas_kelurahan' => $r->luas_kelurahan_km2,
-
-                'kepadatan' => $r->kepadatan_penduduk,
-
-                'jumlah_penduduk' => $r->jumlah_penduduk,
-
-                'rth_per_kapita' => $r->rth_per_kapita,
-
+                'gid'                        => $r->gid,
+                'nama'                       => $r->namobj,
+                'kecamatan'                  => $r->wadmkc,
+                'persen_rth'                 => $r->persentase_rth,
+                'luas_rth'                   => $r->luas_rth_km2,
+                'luas_kelurahan'             => $r->luas_kelurahan_km2,
+                'kepadatan'                  => $r->kepadatan_penduduk,
+                'jumlah_penduduk'            => $r->jumlah_penduduk,
+                'rth_per_kapita'             => $r->rth_per_kapita,
                 'memenuhi_standar_kelurahan' => $r->memenuhi_standar_kelurahan,
-
-                'skor_prioritas' => $priorityScores[$r->gid] ?? 0,
+                'skor_prioritas'             => $priorityScores[$r->gid] ?? 0,
 
                 // ── Analisis perubahan luas RTH vs tahun pembanding ──
-                'diff_persen_rth' => $r->diff_persen_rth,
-
-                'diff_luas_rth_km2' => $r->diff_luas_rth_km2,
-
-                'trend_rth' => $r->trend_rth,
-
+                'diff_persen_rth'            => $r->diff_persen_rth,
+                'diff_luas_rth_km2'          => $r->diff_luas_rth_km2,
+                'trend_rth'                  => $r->trend_rth,
             ];
-
         });
 
         return view('data', compact(

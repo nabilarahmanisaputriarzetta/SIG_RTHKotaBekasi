@@ -217,12 +217,9 @@ body.mode-kepadatan .overlay-btn:not(.active):hover { background: var(--orange-5
 
 .sidebar-panel {
     display: none; flex-direction: column; flex: 1;
-    overflow-y: auto; overflow-x: hidden; min-height: 0;
-    scrollbar-width: thin; scrollbar-color: var(--border-mid) transparent;
+    overflow: hidden; min-height: 0;
     animation: panel-in .25s ease;
 }
-.sidebar-panel::-webkit-scrollbar { width: 3px; }
-.sidebar-panel::-webkit-scrollbar-thumb { background: var(--border-mid); border-radius: 2px; }
 @keyframes panel-in { from { opacity: 0; transform: translateX(8px); } to { opacity: 1; transform: none; } }
 .sidebar-panel--active { display: flex; }
 
@@ -340,7 +337,9 @@ body.mode-kepadatan .overlay-btn:not(.active):hover { background: var(--orange-5
 .sl-chevron { transition: transform .25s ease; color: var(--text-light); }
 .sidebar-list-header.collapsed .sl-chevron { transform: rotate(-90deg); }
 
-.sidebar-list { flex-shrink: 0; }
+.sidebar-list { flex: 1; overflow-y: auto; -webkit-overflow-scrolling: touch; overscroll-behavior: contain; scrollbar-width: thin; scrollbar-color: var(--border-mid) transparent; min-height: 0; }
+.sidebar-list::-webkit-scrollbar { width: 3px; }
+.sidebar-list::-webkit-scrollbar-thumb { background: var(--border-mid); border-radius: 2px; }
 
 /* RTH item */
 .sidebar-kel-item {
@@ -612,7 +611,8 @@ body.mode-kepadatan .overlay-btn:not(.active):hover { background: var(--orange-5
 .cp-go-btn.loading svg { animation: spin .7s linear infinite; }
 
 .cp-body {
-    flex: 1; min-height: 0; overflow-y: auto; overflow-x: hidden;
+    flex: 1; overflow-y: auto; overflow-x: hidden;
+    -webkit-overflow-scrolling: touch; overscroll-behavior: contain;
     scrollbar-width: thin; scrollbar-color: var(--border-mid) transparent;
     padding: 12px 14px; display: flex; flex-direction: column; gap: 10px;
 }
@@ -647,7 +647,7 @@ body.mode-kepadatan .overlay-btn:not(.active):hover { background: var(--orange-5
 
 .cp-list-header { display: flex; justify-content: space-between; font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: .06em; color: var(--text-light); padding: 2px 0 4px; }
 
-.cp-list { border: 1px solid var(--border); border-radius: var(--radius-md); overflow: hidden; max-height: 200px; overflow-y: auto; scrollbar-width: thin; }
+.cp-list { border: 1px solid var(--border); border-radius: var(--radius-md); overflow: hidden; max-height: 200px; overflow-y: auto; -webkit-overflow-scrolling: touch; overscroll-behavior: contain; scrollbar-width: thin; }
 .cp-list-item { display: flex; justify-content: space-between; align-items: center; padding: 6px 10px; border-bottom: 1px solid #f3f4f6; font-size: 11px; transition: background .14s; cursor: pointer; }
 .cp-list-item:last-child { border-bottom: none; }
 .cp-list-item:hover { background: var(--bg-page); }
@@ -745,7 +745,7 @@ body.mode-kepadatan .overlay-btn:not(.active):hover { background: var(--orange-5
     #map { flex: 1; height: 100%; }
     .peta-sidebar {
         position: absolute; bottom: 0; left: 0; right: 0;
-        width: 100%; height: 65vh; border-left: none;
+        width: 100%; height: 56vh; max-height: 480px; border-left: none;
         border-top: 1px solid var(--border);
         border-radius: 20px 20px 0 0;
         box-shadow: 0 -8px 32px rgba(0,0,0,.12);
@@ -754,8 +754,33 @@ body.mode-kepadatan .overlay-btn:not(.active):hover { background: var(--orange-5
     }
     .peta-sidebar.drawer-open { transform: translateY(0); }
     .sidebar-handle { display: block; }
-    .sidebar-toggle-btn { display: flex; }
-    .compare-panel { width: calc(100vw - 24px); left: 12px; right: 12px; max-height: 58vh; }
+    .sidebar-toggle-btn { display: flex; width: 42px; height: 42px; bottom: 16px; right: 16px; }
+
+    /* Ringkas isi sidebar supaya drawer tidak makan tempat & tetap scrollable */
+    .sidebar-summary { padding: 10px 12px 8px; }
+    .ss-metrics { gap: 6px; margin-bottom: 8px; }
+    .ss-metric { padding: 5px 8px; }
+    .ss-m-value { font-size: 12px; }
+    .ss-pct { font-size: 13px; }
+    .ss-status-item { padding: 6px 4px; gap: 2px; }
+    .ss-status-num { font-size: 16px; }
+    .ss-status-label { font-size: 9px; }
+    .ss-progress-wrap { padding: 8px 12px 10px; }
+    .ss-prog-header { margin-bottom: 14px; }
+
+    /* Panel bandingkan tahun: dibatasi tingginya supaya peta tetap kelihatan
+       di bawahnya, bukan menutupi seluruh layar, dan tetap bisa discroll */
+    .compare-panel {
+        width: calc(100vw - 24px); left: 12px; right: 12px; top: 12px;
+        max-height: min(52vh, calc(100% - 24px));
+    }
+    .cp-header { padding: 10px 12px 9px; }
+    .cp-year-row { padding: 10px 12px; }
+    .cp-body { padding: 10px 12px; gap: 8px; }
+    .cp-chip { padding: 6px 4px; }
+    .cp-chip-num { font-size: 16px; }
+    .cp-list { max-height: 130px; }
+
     .map-search input { width: 160px; }
     .map-year-badge { bottom: 70px; }
 
@@ -766,15 +791,6 @@ body.mode-kepadatan .overlay-btn:not(.active):hover { background: var(--orange-5
         right: 12px;
         width: auto;
     }
-    .mobile-legend { padding: 7px 10px; }
-    .mobile-legend .leg-title { display: none; }
-    .mobile-legend .leg-note { display: none; }
-    .mobile-legend .leg-scale {
-        flex-direction: row; flex-wrap: wrap;
-        gap: 5px 12px;
-    }
-    .mobile-legend .leg-item { font-size: 10px; gap: 5px; }
-    .mobile-legend .leg-tag { display: none; }
 }
 
 @media (max-width: 480px) {
@@ -783,6 +799,11 @@ body.mode-kepadatan .overlay-btn:not(.active):hover { background: var(--orange-5
     .btn-label { display: none; }
     .map-search { top: 8px; left: 8px; }
     .map-search input { width: 140px; font-size: 11px; }
+    .header-icon { width: 30px; height: 30px; }
+    .peta-header { padding: 9px 14px 7px; }
+    .peta-sidebar { height: 60vh; }
+    .compare-panel { max-height: min(58vh, calc(100% - 16px)); top: 8px; left: 8px; right: 8px; width: calc(100vw - 16px); }
+    .leaflet-popup-content { min-width: 160px; }
 }
 
 @keyframes shake {
@@ -1175,7 +1196,7 @@ body.mode-kepadatan .overlay-btn:not(.active):hover { background: var(--orange-5
 
 @section('scripts')
 <script>
-const YEARS         = @json($years);
+const YEARS        = @json($years);
 let currentOverlay = 'rth';
 let currentTahun   = @json($year ?? 2025);
 let rthData        = {};

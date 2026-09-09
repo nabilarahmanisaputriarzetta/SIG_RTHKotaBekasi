@@ -62,7 +62,8 @@ footer { display: none !important; }
 .peta-container {
     display: flex;
     flex-direction: column;
-    height: calc(100vh - 64px);
+    height: calc(100vh - 64px);   
+    height: calc(100dvh - 64px);
     overflow: hidden;
     background: var(--bg-page, #f9fafb);
 }
@@ -602,8 +603,7 @@ body.mode-kepadatan .overlay-btn:not(.active):hover { background: var(--orange-5
 .cp-select:hover { border-color: var(--green-500); }
 .cp-select:focus { border-color: var(--green-500); box-shadow: 0 0 0 3px rgba(34,197,94,.12); }
 
-.cp-arrow { color: var(--text-light); padding-bottom: 6px; flex-shrink: 0; animation: arrow-pulse 1.6s ease-in-out infinite; }
-@keyframes arrow-pulse { 0%,100% { transform: translateX(0); opacity: .5; } 50% { transform: translateX(3px); opacity: 1; } }
+.cp-arrow { color: var(--text-light); padding-bottom: 6px; flex-shrink: 0; }
 
 .cp-go-btn {
     flex-shrink: 0; align-self: flex-end;
@@ -622,7 +622,7 @@ body.mode-kepadatan .overlay-btn:not(.active):hover { background: var(--orange-5
 .cp-go-btn.loading svg { animation: spin .7s linear infinite; }
 
 .cp-body {
-    flex: 1; overflow-y: auto; overflow-x: hidden;
+    flex: 1; min-height: 0; overflow-y: auto; overflow-x: hidden;
     -webkit-overflow-scrolling: touch; overscroll-behavior: contain;
     scrollbar-width: thin; scrollbar-color: var(--border-mid) transparent;
     padding: 12px 14px; display: flex; flex-direction: column; gap: 10px;
@@ -754,19 +754,40 @@ body.mode-kepadatan .overlay-btn:not(.active):hover { background: var(--orange-5
         white-space: nowrap;
     }
     #map { flex: 1; height: 100%; }
+    :root {
+        --drawer-h: 56vh;
+        --drawer-h: 56dvh;   
+    }
     .peta-sidebar {
         position: absolute; bottom: 0; left: 0; right: 0;
-        width: 100%; height: 56vh; max-height: 480px; border-left: none;
+        width: 100%; height: var(--drawer-h); max-height: 92vh; max-height: 92dvh; min-height: 140px;
+        border-left: none;
         border-top: 1px solid var(--border);
         border-radius: 20px 20px 0 0;
         box-shadow: 0 -8px 32px rgba(0,0,0,.12);
         transform: translateY(100%);
-        transition: transform var(--tp); z-index: 500;
+        transition: transform var(--tp), height .05s linear;
+        z-index: 500;
     }
     .peta-sidebar.drawer-open { transform: translateY(0); }
-    .sidebar-handle { display: block; }
+    .peta-sidebar.dragging { transition: transform var(--tp); }
+    .sidebar-handle { display: block; touch-action: none; }
     .sidebar-toggle-btn { display: flex; width: 42px; height: 42px; bottom: 16px; right: 16px; }
-    .sidebar-toggle-btn.fab-drawer-open { bottom: calc(56vh + 14px); }
+    .sidebar-toggle-btn.fab-drawer-open { bottom: calc(var(--drawer-h) + 14px); }
+
+    /* Whole sheet scrolls as one unit on mobile so content below the fold
+       (distribution bars, disclaimer, kelurahan list) is always reachable,
+       instead of being clipped by the fixed-height summary blocks above. */
+    .sidebar-panel--active {
+        overflow-y: auto;
+        -webkit-overflow-scrolling: touch;
+        overscroll-behavior: contain;
+    }
+    .sidebar-list {
+        flex: none;
+        overflow: visible;
+        min-height: 0;
+    }
 
     .sidebar-summary { padding: 10px 12px 8px; }
     .ss-metrics { gap: 6px; margin-bottom: 8px; }
@@ -780,26 +801,67 @@ body.mode-kepadatan .overlay-btn:not(.active):hover { background: var(--orange-5
     .ss-prog-header { margin-bottom: 14px; }
 
     .compare-panel {
-        width: min(280px, calc(100vw - 24px));
-        left: auto; right: 12px; top: 12px;
-        max-height: min(70vh, calc(100% - 90px));
+        width: min(256px, calc(100vw - 20px));
+        left: auto;
+        right: 10px;
+        top: 10px;
+        bottom: 10px;
+
+        max-height: none;
+
+        overflow-y: auto !important;
+        overflow-x: hidden !important;
+
+        -webkit-overflow-scrolling: touch;
+        overscroll-behavior: contain;
+
+        scrollbar-width: thin;
+        scrollbar-color: var(--border-mid) transparent;
     }
-    .cp-header { padding: 8px 10px 7px; }
-    .cp-header-icon { width: 24px; height: 24px; }
-    .cp-header h3 { font-size: 12px; }
-    .cp-header p { font-size: 10px; }
-    .cp-close { width: 22px; height: 22px; }
-    .cp-year-row { padding: 8px 10px; gap: 5px; }
-    .cp-select { height: 26px; font-size: 11px; padding: 4px 6px; }
-    .cp-go-btn { height: 26px; padding: 0 9px; font-size: 11px; }
-    .cp-body { padding: 8px 10px; gap: 7px; }
+    .compare-panel::-webkit-scrollbar {
+        width: 4px;
+    }
+
+    .compare-panel::-webkit-scrollbar-thumb {
+        background: var(--border-mid);
+        border-radius: 10px;
+    }
+    .cp-header { padding: 7px 9px 6px; }
+    .cp-header-icon { width: 22px; height: 22px; }
+    .cp-header h3 { font-size: 11.5px; }
+    .cp-header p { font-size: 9.5px; }
+    .cp-close { width: 20px; height: 20px; }
+    .cp-year-row { padding: 7px 9px; gap: 5px; flex-wrap: wrap; }
+    .cp-year-pick { flex: 1 1 auto; min-width: 0; }
+    .cp-select { height: 30px; font-size: 12.5px; padding: 4px 7px; }
+    .cp-go-btn { flex: 1 1 100%; height: 30px; padding: 0 9px; font-size: 11.5px; justify-content: center; }
     .cp-summary { gap: 4px; }
-    .cp-chip { padding: 5px 3px; }
-    .cp-chip-num { font-size: 15px; }
-    .cp-chip-label { font-size: 9px; }
-    .cp-total-row { padding: 6px 9px; font-size: 10px; }
-    .cp-list { max-height: 170px; }
-    .cp-list-item { padding: 5px 8px; font-size: 10px; }
+    .cp-chip { padding: 4px 3px; }
+    .cp-chip-num { font-size: 13.5px; }
+    .cp-chip-label { font-size: 8.5px; }
+    .cp-total-row { padding: 5px 8px; font-size: 9.5px; }
+    .cp-body {
+        flex: none !important;
+        min-height: auto !important;
+        overflow: visible !important;
+
+        padding: 7px 9px 20px;
+        gap: 6px;
+    }
+
+    .cp-summary {
+        gap: 4px;
+    }
+
+    .cp-list {
+        max-height: none !important;
+        overflow: visible !important;
+    }
+
+    .cp-list-item {
+        padding: 4px 7px;
+        font-size: 9.5px;
+    }
 
     .map-search input { width: 160px; }
     .map-year-badge { bottom: 70px; }
@@ -835,15 +897,13 @@ body.mode-kepadatan .overlay-btn:not(.active):hover { background: var(--orange-5
     .map-search input { width: 140px; font-size: 11px; }
     .header-icon { width: 30px; height: 30px; }
     .peta-header { padding: 9px 14px 7px; }
-    .peta-sidebar { height: 60vh; }
-    .sidebar-toggle-btn.fab-drawer-open { bottom: calc(60vh + 14px); }
+    :root { --drawer-h: 60vh; }
+    .sidebar-toggle-btn.fab-drawer-open { display: none; }
     .compare-panel {
-        width: min(250px, calc(100vw - 16px));
-        left: auto; right: 8px; top: 8px;
-        max-height: min(68vh, calc(100% - 80px));
+        width: min(240px, calc(100vw - 16px));
+        left: auto; right: 8px; top: 8px; bottom: 8px;
+        max-height: none;
     }
-    .cp-list { max-height: 140px; }
-
     .ss-metrics { gap: 5px; }
     .ss-metric { padding: 4px 6px; }
     .ss-m-label { font-size: 9px; }
@@ -1313,22 +1373,33 @@ document.addEventListener('DOMContentLoaded', () => {
         searchInput.addEventListener('input', () => clearBtn.classList.toggle('visible', searchInput.value.length > 0));
     }
 
-    // Mobile drag handle
+    // Mobile drag handle — resizes the bottom sheet via the --drawer-h custom
+    // property, which both .peta-sidebar's height and the close-FAB position
+    // read from, so they always stay in sync.
     const handle  = document.getElementById('sidebarHandle');
     const sidebar = document.getElementById('petaSidebar');
     if (handle && sidebar) {
         let startY = 0, startH = 0, dragging = false;
+        const MIN_H = 140;
+        const maxH  = () => window.innerHeight * .92;
+
         handle.addEventListener('pointerdown', e => {
             if (window.innerWidth > 768) return;
-            dragging = true; startY = e.clientY; startH = sidebar.offsetHeight;
+            dragging = true;
+            startY = e.clientY;
+            startH = sidebar.getBoundingClientRect().height;
+            sidebar.classList.add('dragging');
             handle.setPointerCapture(e.pointerId);
         });
         handle.addEventListener('pointermove', e => {
             if (!dragging) return;
             const delta = startY - e.clientY;
-            sidebar.style.maxHeight = Math.min(Math.max(startH + delta, 80), window.innerHeight * .85) + 'px';
+            const newH = Math.min(Math.max(startH + delta, MIN_H), maxH());
+            document.documentElement.style.setProperty('--drawer-h', newH + 'px');
         });
-        handle.addEventListener('pointerup', () => { dragging = false; });
+        const endDrag = () => { dragging = false; sidebar.classList.remove('dragging'); };
+        handle.addEventListener('pointerup', endDrag);
+        handle.addEventListener('pointercancel', endDrag);
     }
 
     document.addEventListener('keydown', e => { if (e.key === 'Escape' && _compareOpen) toggleCompare(); });
@@ -1801,10 +1872,12 @@ function toggleCompare() {
     _compareOpen = !_compareOpen;
     const panel = document.getElementById('comparePanel');
     const btn    = document.getElementById('btnCompare');
+    const fab    = document.getElementById('sidebarToggleBtn');   // tambahan
     if (!panel) return;
     panel.classList.toggle('open', _compareOpen);
     panel.setAttribute('aria-hidden', String(!_compareOpen));
     if (btn) { btn.setAttribute('aria-expanded', String(_compareOpen)); btn.classList.toggle('is-compare-open', _compareOpen); }
+    if (fab) fab.classList.toggle('compare-open', _compareOpen);  // tambahan
     if (_compareOpen) panel.querySelector('.cp-close')?.focus();
     if (_compareOpen && window.innerWidth <= 768) {
         const sb = document.getElementById('petaSidebar');

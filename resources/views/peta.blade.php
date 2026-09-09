@@ -57,6 +57,13 @@ body.mode-kepadatan   { --sidebar-accent: var(--orange-700); }
 /* =====================================================================
    LAYOUT
 ===================================================================== */
+/* Halaman peta didesain full-viewport (app-like): footer global dari
+   layout disembunyikan khusus di halaman ini supaya tidak ikut ter-scroll
+   masuk ke atas peta/sidebar (lihat screenshot: footer "Nabila..." muncul
+   menimpa drawer). Kalau footer memang harus tetap tampil di halaman ini,
+   kabari saya — override ini gampang dicabut. */
+footer { display: none !important; }
+
 .peta-container {
     display: flex;
     flex-direction: column;
@@ -755,6 +762,9 @@ body.mode-kepadatan .overlay-btn:not(.active):hover { background: var(--orange-5
     .peta-sidebar.drawer-open { transform: translateY(0); }
     .sidebar-handle { display: block; }
     .sidebar-toggle-btn { display: flex; width: 42px; height: 42px; bottom: 16px; right: 16px; }
+    /* Saat drawer terbuka, geser FAB ke atas drawer supaya tidak menimpa
+       konten sidebar (mis. tombol "Tentang skor rekomendasi") */
+    .sidebar-toggle-btn.fab-drawer-open { bottom: calc(56vh + 14px); }
 
     /* Ringkas isi sidebar supaya drawer tidak makan tempat & tetap scrollable */
     .sidebar-summary { padding: 10px 12px 8px; }
@@ -768,18 +778,30 @@ body.mode-kepadatan .overlay-btn:not(.active):hover { background: var(--orange-5
     .ss-progress-wrap { padding: 8px 12px 10px; }
     .ss-prog-header { margin-bottom: 14px; }
 
-    /* Panel bandingkan tahun: dibatasi tingginya supaya peta tetap kelihatan
-       di bawahnya, bukan menutupi seluruh layar, dan tetap bisa discroll */
+    /* Panel bandingkan tahun: dibuat kartu kecil nempel kanan-atas (bukan
+       full-width) supaya sebagian besar peta tetap kelihatan di sekitarnya,
+       dan isinya tetap bisa discroll */
     .compare-panel {
-        width: calc(100vw - 24px); left: 12px; right: 12px; top: 12px;
-        max-height: min(52vh, calc(100% - 24px));
+        width: min(260px, calc(100vw - 24px));
+        left: auto; right: 12px; top: 12px;
+        max-height: min(44vh, calc(100% - 24px));
     }
-    .cp-header { padding: 10px 12px 9px; }
-    .cp-year-row { padding: 10px 12px; }
-    .cp-body { padding: 10px 12px; gap: 8px; }
-    .cp-chip { padding: 6px 4px; }
-    .cp-chip-num { font-size: 16px; }
-    .cp-list { max-height: 130px; }
+    .cp-header { padding: 8px 10px 7px; }
+    .cp-header-icon { width: 24px; height: 24px; }
+    .cp-header h3 { font-size: 12px; }
+    .cp-header p { font-size: 10px; }
+    .cp-close { width: 22px; height: 22px; }
+    .cp-year-row { padding: 8px 10px; gap: 5px; }
+    .cp-select { height: 26px; font-size: 11px; padding: 4px 6px; }
+    .cp-go-btn { height: 26px; padding: 0 9px; font-size: 11px; }
+    .cp-body { padding: 8px 10px; gap: 7px; }
+    .cp-summary { gap: 4px; }
+    .cp-chip { padding: 5px 3px; }
+    .cp-chip-num { font-size: 15px; }
+    .cp-chip-label { font-size: 9px; }
+    .cp-total-row { padding: 6px 9px; font-size: 10px; }
+    .cp-list { max-height: 100px; }
+    .cp-list-item { padding: 5px 8px; font-size: 10px; }
 
     .map-search input { width: 160px; }
     .map-year-badge { bottom: 70px; }
@@ -790,21 +812,23 @@ body.mode-kepadatan .overlay-btn:not(.active):hover { background: var(--orange-5
         bottom: auto;
         left: 12px;
         right: auto;
-        width: min(190px, calc(100vw - 24px));
+        width: min(160px, calc(100vw - 24px));
     }
-    .mobile-legend { padding: 9px 11px 10px; }
-    .mobile-legend .leg-item { font-size: 9.5px; }
-    .mobile-legend .leg-swatch { width: 11px; height: 11px; }
-    .mobile-legend .leg-note { font-size: 9px; }
-    .mobile-legend .leg-tag { font-size: 8px; padding: 1px 4px; }
+    .mobile-legend { padding: 7px 9px 8px; }
+    .mobile-legend .leg-title { font-size: 9px; margin-bottom: 5px; }
+    .mobile-legend .leg-scale { gap: 2px; }
+    .mobile-legend .leg-item { font-size: 8.5px; gap: 5px; }
+    .mobile-legend .leg-swatch { width: 9px; height: 9px; }
+    .mobile-legend .leg-note { font-size: 8px; margin-top: 5px; }
+    .mobile-legend .leg-tag { font-size: 7px; padding: 1px 3px; }
 
     /* Popup & tooltip kelurahan mengikuti lebar layar, bukan fixed 240px */
     .leaflet-popup-content-wrapper { max-width: calc(100vw - 48px) !important; }
-    .leaflet-popup-content { min-width: 170px; }
-    .popup-inner { padding: 9px 11px 10px; }
-    .popup-title { font-size: 11px; }
-    .popup-row { font-size: 10.5px; }
-    .peta-tooltip { max-width: min(220px, calc(100vw - 48px)); }
+    .leaflet-popup-content { min-width: 150px; }
+    .popup-inner { padding: 8px 10px 9px; }
+    .popup-title { font-size: 10.5px; }
+    .popup-row { font-size: 10px; }
+    .peta-tooltip { max-width: min(190px, calc(100vw - 48px)); }
 }
 
 @media (max-width: 480px) {
@@ -816,7 +840,13 @@ body.mode-kepadatan .overlay-btn:not(.active):hover { background: var(--orange-5
     .header-icon { width: 30px; height: 30px; }
     .peta-header { padding: 9px 14px 7px; }
     .peta-sidebar { height: 60vh; }
-    .compare-panel { max-height: min(58vh, calc(100% - 16px)); top: 8px; left: 8px; right: 8px; width: calc(100vw - 16px); }
+    .sidebar-toggle-btn.fab-drawer-open { bottom: calc(60vh + 14px); }
+    .compare-panel {
+        width: min(230px, calc(100vw - 16px));
+        left: auto; right: 8px; top: 8px;
+        max-height: min(48vh, calc(100% - 16px));
+    }
+    .cp-list { max-height: 84px; }
 
     /* Kartu-kartu makin dipadatkan di layar sangat sempit */
     .ss-metrics { gap: 5px; }
@@ -830,15 +860,19 @@ body.mode-kepadatan .overlay-btn:not(.active):hover { background: var(--orange-5
     .cp-chip-num { font-size: 14px; }
     .cp-chip-label { font-size: 9px; }
 
-    .mobile-legend-wrap { width: min(168px, calc(100vw - 16px)); top: 80px; left: 8px; }
-    .mobile-legend { padding: 8px 9px 9px; }
-    .mobile-legend .leg-item { font-size: 9px; }
+    .mobile-legend-wrap { width: min(140px, calc(100vw - 16px)); top: 80px; left: 8px; }
+    .mobile-legend { padding: 6px 8px 7px; }
+    .mobile-legend .leg-title { font-size: 8px; }
+    .mobile-legend .leg-item { font-size: 8px; }
+    .mobile-legend .leg-swatch { width: 8px; height: 8px; }
     .mobile-legend .leg-note { display: none; }
+    .mobile-legend .leg-tag { display: none; }
 
     .leaflet-popup-content-wrapper { max-width: calc(100vw - 32px) !important; }
-    .leaflet-popup-content { min-width: 150px; }
-    .popup-inner { padding: 8px 10px 9px; }
-    .popup-row { font-size: 10px; gap: 8px; }
+    .leaflet-popup-content { min-width: 140px; }
+    .popup-inner { padding: 7px 9px 8px; }
+    .popup-title { font-size: 10px; }
+    .popup-row { font-size: 9.5px; gap: 8px; }
 }
 
 @keyframes shake {
@@ -1944,6 +1978,7 @@ function updateFabIcon() {
     const c = document.getElementById('fabIconClose');
     if (o) o.style.display = isOpen ? 'none'  : 'block';
     if (c) c.style.display = isOpen ? 'block' : 'none';
+    document.getElementById('sidebarToggleBtn')?.classList.toggle('fab-drawer-open', !!isOpen);
 }
 
 /* ── Loading ── */

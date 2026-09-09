@@ -52,7 +52,7 @@
     --tp: 0.32s cubic-bezier(0.32,0.72,0,1);
 }
 
-body.mode-kepadatan   { --sidebar-accent: var(--orange-700); }
+body.mode-kepadatan { --sidebar-accent: var(--orange-700); }
 
 /* =====================================================================
    LAYOUT
@@ -279,8 +279,8 @@ body.mode-kepadatan .overlay-btn:not(.active):hover { background: var(--orange-5
     transition: transform .3s cubic-bezier(0.34,1.56,0.64,1);
 }
 .ss-status-num.bump { transform: scale(1.3); }
-.ss-status-ok .ss-status-num      { color: var(--green-700); }
-.ss-status-no .ss-status-num      { color: var(--red); }
+.ss-status-ok .ss-status-num       { color: var(--green-700); }
+.ss-status-no .ss-status-num       { color: var(--red); }
 .ss-status-danger .ss-status-num { color: #9f1239; }
 .ss-status-ok-padat .ss-status-num { color: var(--green-600); }
 .ss-status-label { font-size: 10px; color: var(--text-light); display: flex; align-items: center; gap: 3px; text-align: center; line-height: 1.3; }
@@ -369,7 +369,10 @@ body.mode-kepadatan .overlay-btn:not(.active):hover { background: var(--orange-5
 .ski-rank-badge--padat { background: var(--orange-100); color: var(--orange-700); }
 .ski-rek-need { display: block; margin-top: 3px; font-weight: 700; color: var(--text-dark); }
 
-.rek-disclaimer { border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); background: var(--bg-page); }
+.rek-disclaimer {
+    border-top: 1px solid var(--border); border-bottom: 1px solid var(--border);
+    background: var(--bg-page); position: relative; flex-shrink: 0;
+}
 .rek-disclaimer-toggle {
     width: 100%; display: flex; align-items: center; gap: 6px; padding: 7px 14px;
     background: none; border: none; cursor: pointer; font-family: inherit;
@@ -379,7 +382,15 @@ body.mode-kepadatan .overlay-btn:not(.active):hover { background: var(--orange-5
 .rek-disclaimer-toggle span { flex: 1; }
 .rek-disclaimer-toggle svg.rd-chevron { flex-shrink: 0; color: var(--text-light); transition: transform .2s ease; }
 .rek-disclaimer-toggle[aria-expanded="true"] svg.rd-chevron { transform: rotate(180deg); }
-.rek-disclaimer-body { display: none; padding: 0 14px 10px 34px; font-size: 10.5px; line-height: 1.5; color: var(--text-mid); }
+
+.rek-disclaimer-body {
+    display: none;
+    position: absolute; top: 100%; left: 0; right: 0; z-index: 20;
+    background: white; border-bottom: 1px solid var(--border);
+    box-shadow: var(--shadow-md);
+    padding: 10px 14px 12px 34px; font-size: 10.5px; line-height: 1.5; color: var(--text-mid);
+    max-height: min(220px, 55vh); overflow-y: auto; -webkit-overflow-scrolling: touch;
+}
 .rek-disclaimer-body.open { display: block; }
 .rek-disclaimer-body b { color: var(--text-dark); }
 .ski-pct-badge {
@@ -1789,7 +1800,7 @@ function toggleRekDisclaimer(btn) {
 function toggleCompare() {
     _compareOpen = !_compareOpen;
     const panel = document.getElementById('comparePanel');
-    const btn   = document.getElementById('btnCompare');
+    const btn    = document.getElementById('btnCompare');
     if (!panel) return;
     panel.classList.toggle('open', _compareOpen);
     panel.setAttribute('aria-hidden', String(!_compareOpen));

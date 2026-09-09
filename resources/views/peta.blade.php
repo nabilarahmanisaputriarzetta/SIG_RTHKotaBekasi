@@ -217,9 +217,12 @@ body.mode-kepadatan .overlay-btn:not(.active):hover { background: var(--orange-5
 
 .sidebar-panel {
     display: none; flex-direction: column; flex: 1;
-    overflow: hidden; min-height: 0;
+    overflow-y: auto; overflow-x: hidden; min-height: 0;
+    scrollbar-width: thin; scrollbar-color: var(--border-mid) transparent;
     animation: panel-in .25s ease;
 }
+.sidebar-panel::-webkit-scrollbar { width: 3px; }
+.sidebar-panel::-webkit-scrollbar-thumb { background: var(--border-mid); border-radius: 2px; }
 @keyframes panel-in { from { opacity: 0; transform: translateX(8px); } to { opacity: 1; transform: none; } }
 .sidebar-panel--active { display: flex; }
 
@@ -268,8 +271,8 @@ body.mode-kepadatan .overlay-btn:not(.active):hover { background: var(--orange-5
 .ss-status-row { display: flex; align-items: stretch; border: 1px solid var(--border); border-radius: var(--radius-md); overflow: hidden; }
 .ss-status-item { flex: 1; display: flex; flex-direction: column; align-items: center; padding: 8px 6px; gap: 3px; transition: filter .15s; }
 .ss-status-item:hover { filter: brightness(.97); }
-.ss-status-ok      { background: var(--green-50); }
-.ss-status-no      { background: var(--red-50); }
+.ss-status-ok       { background: var(--green-50); }
+.ss-status-no       { background: var(--red-50); }
 .ss-status-danger { background: #fff1f2; }
 .ss-status-ok-padat { background: #f0fdf4; }
 
@@ -337,9 +340,7 @@ body.mode-kepadatan .overlay-btn:not(.active):hover { background: var(--orange-5
 .sl-chevron { transition: transform .25s ease; color: var(--text-light); }
 .sidebar-list-header.collapsed .sl-chevron { transform: rotate(-90deg); }
 
-.sidebar-list { flex: 1; overflow-y: auto; scrollbar-width: thin; scrollbar-color: var(--border-mid) transparent; min-height: 0; }
-.sidebar-list::-webkit-scrollbar { width: 3px; }
-.sidebar-list::-webkit-scrollbar-thumb { background: var(--border-mid); border-radius: 2px; }
+.sidebar-list { flex-shrink: 0; }
 
 /* RTH item */
 .sidebar-kel-item {
@@ -611,7 +612,7 @@ body.mode-kepadatan .overlay-btn:not(.active):hover { background: var(--orange-5
 .cp-go-btn.loading svg { animation: spin .7s linear infinite; }
 
 .cp-body {
-    flex: 1; overflow-y: auto; overflow-x: hidden;
+    flex: 1; min-height: 0; overflow-y: auto; overflow-x: hidden;
     scrollbar-width: thin; scrollbar-color: var(--border-mid) transparent;
     padding: 12px 14px; display: flex; flex-direction: column; gap: 10px;
 }
@@ -754,7 +755,7 @@ body.mode-kepadatan .overlay-btn:not(.active):hover { background: var(--orange-5
     .peta-sidebar.drawer-open { transform: translateY(0); }
     .sidebar-handle { display: block; }
     .sidebar-toggle-btn { display: flex; }
-    .compare-panel { width: calc(100vw - 24px); left: 12px; right: 12px; max-height: 80vh; }
+    .compare-panel { width: calc(100vw - 24px); left: 12px; right: 12px; max-height: 58vh; }
     .map-search input { width: 160px; }
     .map-year-badge { bottom: 70px; }
 
@@ -765,6 +766,15 @@ body.mode-kepadatan .overlay-btn:not(.active):hover { background: var(--orange-5
         right: 12px;
         width: auto;
     }
+    .mobile-legend { padding: 7px 10px; }
+    .mobile-legend .leg-title { display: none; }
+    .mobile-legend .leg-note { display: none; }
+    .mobile-legend .leg-scale {
+        flex-direction: row; flex-wrap: wrap;
+        gap: 5px 12px;
+    }
+    .mobile-legend .leg-item { font-size: 10px; gap: 5px; }
+    .mobile-legend .leg-tag { display: none; }
 }
 
 @media (max-width: 480px) {
@@ -1165,17 +1175,17 @@ body.mode-kepadatan .overlay-btn:not(.active):hover { background: var(--orange-5
 
 @section('scripts')
 <script>
-const YEARS        = @json($years);
+const YEARS         = @json($years);
 let currentOverlay = 'rth';
 let currentTahun   = @json($year ?? 2025);
 let rthData        = {};
 let kepadatanData  = {};
 let compareData    = {};
 let rekomendasiData = {};
-let allKelData     = [];
-let allKpData      = [];
-let allRekData     = [];
-let sortMode       = 'desc';
+let allKelData      = [];
+let allKpData       = [];
+let allRekData      = [];
+let sortMode        = 'desc';
 let geojsonLayer   = null;
 let map;
 let _compareOpen   = false;
@@ -1784,7 +1794,7 @@ function activateTransisiOverlay() {
     currentOverlay = 'transisi';
 
     const legRth       = document.getElementById('mobileLegendRth');
-    const legKp         = document.getElementById('mobileLegendKepadatan');
+    const legKp        = document.getElementById('mobileLegendKepadatan');
     const legTransisi   = document.getElementById('mobileLegendTransisi');
     if (legRth) legRth.style.display = 'none';
     if (legKp)  legKp.style.display  = 'none';
@@ -2004,7 +2014,7 @@ async function renderMap() {
                 const cat      = kpNum != null ? kpCategory(kpNum) : '-';
                 let catClass   = 'badge-sedang';
                 if (kpNum != null) {
-                    if (kpNum > 400)       catClass = 'badge-sangat';
+                    if (kpNum > 400)        catClass = 'badge-sangat';
                     else if (kpNum >= 201) catClass = 'badge-no';
                     else if (kpNum >= 151) catClass = 'badge-sedang';
                     else                   catClass = 'badge-rendah';
